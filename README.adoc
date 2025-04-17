@@ -93,7 +93,11 @@ Two variables are added to the expression language context when the policy runs:
                 "location": "https://httpbin.org/anything/{#group[0]}",
                 "status": 301
             }
-        ]
+        ],
+        "cache": {
+          "maxItems": 0,
+          "timeToLive": 0
+        }
     }
 }
 ----
@@ -110,25 +114,35 @@ Redirections triggered by the rules defined in the example are summarized in the
 ^.^| https://httpbin.org/headers
 ^.^| 302
 
-^.^| /status/201
+^.^| `/status/201`
 ^.^| https://httpbin.org/status/201
 ^.^| 301
 
-^.^| /foo
+^.^| `/foo`
 ^.^| https://httpbin.org/anything/foo
 ^.^| 301
 
-^.^| /bar
+^.^| `/bar`
 ^.^| https://httpbin.org/anything/bar
 ^.^| 301
 
-^.^| /baz
+^.^| `/baz`
 ^.^| https://httpbin.org/anything/baz
 ^.^| 301
 
-^.^| /foo/bar/baz
+^.^| `/foo/bar/baz`
 ^.^| https://httpbin.org/anything/foo/bar/baz
 ^.^| 301
 |===
 
  When no rule matched, the request is routed as usual to the endpoint defined in the API configuration.
+
+=== Cache configuration
+
+The policy caches regular expression patterns compiled from incoming request path to alleviate the cost of the compilation
+on response times. By default, the cache is configured to store an unlimited number of items with no expiration.
+
+For statically defined paths, the number of items stored in the cache will be equal to the number of rules defined for the policy.
+
+If expression language is used to build rule paths dynamically, configuring the cache allows to control how memory consumption
+will be impacted by the use of the cache.
