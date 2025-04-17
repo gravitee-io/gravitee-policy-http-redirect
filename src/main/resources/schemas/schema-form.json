@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "title": "HTTP Redirect",
+    "description": "Send an HTTP redirect response according to specified rules",
+    "properties": {
+        "rules": {
+            "title": "Redirect rules",
+            "description": "Ordered list of rules to apply to inbound request.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "title": "Rule",
+                "properties": {
+                    "path": {
+                        "title": "Match expression",
+                        "description": "Regular expression to match incoming path (Support EL).",
+                        "type": "string",
+                        "x-schema-form": {
+                            "expression-language": true
+                        }
+                    },
+                    "location": {
+                        "title": "Redirect to",
+                        "description": "The  value to set ",
+                        "type": "string",
+                        "x-schema-form": {
+                            "expression-language": true
+                        }
+                    },
+                    "status": {
+                        "title": "Response status",
+                        "description": "Status of the HTTP redirect response",
+                        "type": "integer",
+                        "enum": [300, 301, 302, 303, 304, 305, 306, 307, 308],
+                        "default": 301
+                    }
+                },
+                "required": ["path", "location", "status"]
+            }
+        }
+    },
+    "required": ["rules"]
+}
