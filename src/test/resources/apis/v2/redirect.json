@@ -1,0 +1,57 @@
+{
+    "id": "v2-http-redirect-caught",
+    "name": "v2-http-redirect",
+    "gravitee": "2.0.0",
+    "proxy": {
+        "context_path": "/http-redirect/v2",
+        "groups": [
+            {
+                "name": "default-group",
+                "endpoints": [
+                    {
+                        "name": "default",
+                        "target": "http://localhost:8080"
+                    }
+                ]
+            }
+        ]
+    },
+    "flows": [
+        {
+            "name": "redirect",
+            "methods": [],
+            "enabled": true,
+            "path-operator": {
+                "path": "/",
+                "operator": "STARTS_WITH"
+            },
+            "pre": [
+                {
+                    "name": "HTTP Redirect",
+                    "enabled": true,
+                    "policy": "http-redirect",
+                    "configuration": {
+                        "rules": [
+                            {
+                                "path": "/headers",
+                                "location": "https://httpbin.org/headers",
+                                "status": 302
+                            },
+                            {
+                                "path": "/status/(?<code>.*)",
+                                "location": "https://httpbin.org/status/{#groupName['code']}",
+                                "status": 301
+                            },
+                            {
+                                "path": "/anything/(.*)",
+                                "location": "https://httpbin.org/anything/{#group[0]}",
+                                "status": 308
+                            }
+                        ]
+                    }
+                }
+            ],
+            "post": []
+        }
+    ]
+}

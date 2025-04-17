@@ -1,0 +1,66 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "title": "HTTP Redirect",
+    "description": "Send an HTTP redirect response according to specified rules",
+    "properties": {
+        "rules": {
+            "title": "Redirect rules",
+            "description": "Ordered list of rules to apply to inbound request.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "title": "Rule",
+                "properties": {
+                    "path": {
+                        "title": "Match expression",
+                        "description": "Regular expression to match incoming path (Supports EL).",
+                        "type": "string",
+                        "x-schema-form": {
+                            "expression-language": true
+                        }
+                    },
+                    "location": {
+                        "title": "Redirect to",
+                        "description": "The  value to set in the Location header of the response (Supports EL).",
+                        "type": "string",
+                        "x-schema-form": {
+                            "expression-language": true
+                        }
+                    },
+                    "status": {
+                        "title": "Response status",
+                        "description": "Status of the HTTP redirect response",
+                        "type": "integer",
+                        "enum": [300, 301, 302, 303, 304, 305, 306, 307, 308],
+                        "default": 301
+                    }
+                },
+                "required": ["path", "location", "status"]
+            }
+        },
+        "cache": {
+            "title": "Cache configuration",
+            "description": "Cache configuration for regular expressions compiled from inbound request paths.",
+            "type": "object",
+            "properties": {
+                "maxItems": {
+                    "title": "Maximum items",
+                    "description": "Maximum number of regular expression patterns stored in the cache. 0 means no maximum.",
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "timeToLive": {
+                    "title": "Time to live",
+                    "description": "The duration in milliseconds before a regular expression pattern stored in the cache gets evicted. 0 means no eviction.",
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0
+                }
+            }
+        }
+    },
+    "required": ["rules"]
+}
