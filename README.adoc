@@ -60,7 +60,7 @@ initial request path (excluding the API context path).
 The first rule defined in the rule list that matches the request path will trigger a redirect response with the associated status.
 
 In a rule, `path` and `location` both support https://documentation.gravitee.io/apim/getting-started/gravitee-expression-language[Gravitee Expression Language] expressions. The `path` property
-supports regular expression matching, which allows to capture groups that can be reused to build the location
+supports regular expression matching, which allows capturing groups that can be reused to build the location
 URL using expression language.
 
 Two variables are added to the expression language context when the policy runs:
@@ -135,14 +135,14 @@ Redirections triggered by the rules defined in the example are summarized in the
 ^.^| 301
 |===
 
- When no rule matched, the request is routed as usual to the endpoint defined in the API configuration.
+ When no rule is matched, the request is routed as usual to the endpoint defined in the API configuration.
 
 === Cache configuration
 
-The policy caches regular expression patterns compiled from incoming request path to alleviate the cost of the compilation
-on response times. By default, the cache is configured to store an unlimited number of items with no expiration.
+The policy caches regular expression patterns compiled from the incoming request path to alleviate the cost compilation
+has on response times. By default, the cache is configured to store an unlimited number of items with no expiration.
 
 For statically defined paths, the number of items stored in the cache will be equal to the number of rules defined for the policy.
 
-If expression language is used to build rule paths dynamically, configuring the cache allows to control how memory consumption
+If expression language is used to build rule paths dynamically, configuring the cache allows control of how memory consumption
 will be impacted by the use of the cache.
