@@ -34,7 +34,6 @@ import io.gravitee.policy.http.redirect.configuration.HTTPRedirectPolicyConfigur
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -136,10 +135,6 @@ public class HTTPRedirectPolicy implements HttpPolicy {
     private void sendRedirect(Redirect redirect, Response response, PolicyChain policyChain) {
         response.headers().set(HttpHeaderNames.LOCATION, redirect.location);
         policyChain.failWith(PolicyResult.failure(INTERRUPT_KEY, redirect.status, ""));
-    }
-
-    private static Map<String, Pattern> mapPatterns(Collection<Rule> rules) {
-        return rules.stream().collect(toMap(Rule::path, rule -> Pattern.compile(rule.path())));
     }
 
     private static String[] getIndexedGroups(RuleMatch ruleMatch) {
