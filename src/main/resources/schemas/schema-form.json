@@ -17,16 +17,24 @@
                         "title": "Match expression",
                         "description": "Regular expression to match incoming path (Supports EL).",
                         "type": "string",
+                        "examples": ["/(.*)"],
                         "x-schema-form": {
                             "expression-language": true
+                        },
+                        "gioConfig": {
+                            "el": true
                         }
                     },
                     "location": {
                         "title": "Redirect to",
                         "description": "The  value to set in the Location header of the response (Supports EL).",
                         "type": "string",
+                        "examples": ["https://api.gravitee.io/{#group[0]}"],
                         "x-schema-form": {
                             "expression-language": true
+                        },
+                        "gioConfig": {
+                            "el": true
                         }
                     },
                     "status": {
@@ -34,7 +42,8 @@
                         "description": "Status of the HTTP redirect response",
                         "type": "integer",
                         "enum": [300, 301, 302, 303, 304, 305, 306, 307, 308],
-                        "default": 301
+                        "default": 301,
+                        "examples": [302]
                     }
                 },
                 "required": ["path", "location", "status"]
@@ -50,14 +59,16 @@
                     "description": "Maximum number of regular expression patterns stored in the cache. 0 means no maximum.",
                     "type": "integer",
                     "default": 0,
-                    "minimum": 0
+                    "minimum": 0,
+                    "examples": [5]
                 },
                 "timeToLive": {
                     "title": "Time to live",
                     "description": "The duration in milliseconds before a regular expression pattern stored in the cache gets evicted. 0 means no eviction.",
                     "type": "integer",
                     "default": 0,
-                    "minimum": 0
+                    "minimum": 0,
+                    "examples": [30000]
                 }
             }
         }

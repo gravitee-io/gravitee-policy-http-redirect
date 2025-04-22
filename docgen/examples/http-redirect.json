@@ -1,0 +1,23 @@
+{
+    "rules": [
+        {
+            "path": "/headers",
+            "location": "https://httpbin.org/headers",
+            "status": 302
+        },
+        {
+            "path": "/status/(?<code>.*)",
+            "location": "https://httpbin.org/status/{#groupName['code']}",
+            "status": 301
+        },
+        {
+            "path": "/(.*)",
+            "location": "https://httpbin.org/anything/{#group[0]}",
+            "status": 301
+        }
+    ],
+    "cache": {
+        "maxItems": 0,
+        "timeToLive": 0
+    }
+}
