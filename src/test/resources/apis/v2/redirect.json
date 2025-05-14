@@ -34,7 +34,7 @@
                         "rules": [
                             {
                                 "path": "/headers",
-                                "location": "https://httpbin.org/headers",
+                                "location": "https://httpbin.org//headers",
                                 "status": 302
                             },
                             {
