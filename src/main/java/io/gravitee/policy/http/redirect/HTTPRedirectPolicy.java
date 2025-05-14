@@ -34,6 +34,7 @@ import io.gravitee.policy.http.redirect.configuration.HTTPRedirectPolicyConfigur
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
+import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -91,7 +92,8 @@ public class HTTPRedirectPolicy implements HttpPolicy {
         templateEngine.getTemplateContext().setVariable(GROUP_NAME_ATTRIBUTE, getNamedGroups(ruleMatch));
         return templateEngine
             .eval(ruleMatch.rule.location(), String.class)
-            .map(location -> new Redirect(location, ruleMatch.rule.status()));
+            .map(location -> new Redirect(location, ruleMatch.rule.status()))
+            .doOnError(e -> log.error("Unable to build redirect", e));
     }
 
     private Completable rxSendRedirect(Redirect redirect, HttpPlainExecutionContext ctx) {
@@ -129,7 +131,12 @@ public class HTTPRedirectPolicy implements HttpPolicy {
     private Redirect buildRedirect(RuleMatch ruleMatch, TemplateEngine templateEngine) {
         templateEngine.getTemplateContext().setVariable(GROUP_TEMPLATE_ATTRIBUTE, getIndexedGroups(ruleMatch));
         templateEngine.getTemplateContext().setVariable(GROUP_NAME_ATTRIBUTE, getNamedGroups(ruleMatch));
-        return new Redirect(templateEngine.getValue(ruleMatch.rule.location(), String.class), ruleMatch.rule.status());
+        try {
+            return new Redirect(templateEngine.getValue(ruleMatch.rule.location(), String.class), ruleMatch.rule.status());
+        } catch (IllegalArgumentException e) {
+            log.error("Unable to build redirect", e);
+            throw e;
+        }
     }
 
     private void sendRedirect(Redirect redirect, Response response, PolicyChain policyChain) {
@@ -158,7 +165,12 @@ public class HTTPRedirectPolicy implements HttpPolicy {
         return CacheConfiguration.builder().maxSize(config.maxSize()).timeToLiveInMs(config.timeToLive()).build();
     }
 
-    private record Redirect(String location, int status) {}
+    private record Redirect(String location, int status) {
+        private Redirect(String location, int status) {
+            this.location = URI.create(location).normalize().toString();
+            this.status = status;
+        }
+    }
 
     private record RuleMatch(Rule rule, Pattern pattern, Matcher matcher) {}
 }
