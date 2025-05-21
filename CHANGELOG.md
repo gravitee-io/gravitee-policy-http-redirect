@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/gravitee-io/gravitee-policy-http-redirect/compare/1.0.0...1.0.1) (2025-05-21)
+
+
+### Bug Fixes
+
+* normalize redirect location URI ([365cae8](https://github.com/gravitee-io/gravitee-policy-http-redirect/commit/365cae8ab0531d0a2f208480cb537f7a68f5da99))
+
 # 1.0.0 (2025-04-18)
 
 
