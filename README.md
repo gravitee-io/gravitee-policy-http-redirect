@@ -15,7 +15,6 @@ The URI for redirection is sent back to the HTTP client using a `Location` heade
 
 
 
-
 ## Usage
 
 You can configure multiple rules and their respective redirections relative to the
@@ -56,59 +55,60 @@ If expression language is used to build rule paths dynamically, configuring the 
 
 
 ## Phases
-The phases checked below are supported by the `http-redirect` policy:
+The `http-redirect` policy can be applied to the following API types and flow phases.
 
-### Compatible with API type:
+### Compatible API types
 
 * `PROXY`
 
-### Can be used in flow phases:
+### Supported flow phases:
 
 * Request
 
 ## Compatibility matrix
-Strikethrough line are deprecated versions
+Strikethrough text indicates that a version is deprecated.
 
-| Plugin version| APIM| AM| Cockpit| Java version| Comment |
-| --- | --- | --- | --- | --- | ---  |
-|1.0.0 and after|4.7.x and after|-|-|21|- |
+| Plugin version| APIM| Java version |
+| --- | --- | ---  |
+|1.0.0 and after|4.7.x and after|21 |
 
 
-## Configuration Options
+## Configuration options
 
 
 #### 
-| Name <br>`json name`  | Type <br>(constraint)  | Mandatory  | Default  | Supports <br>EL  | Supports <br>Secrets | Description  |
-|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
-| Cache configuration<br>`cache`| object|  | |  |  | Cache configuration for regular expressions compiled from inbound request paths.<br/>See "Cache configuration" section|
-| Redirect rules<br>`rules`| array| ✅| |  |  | Ordered list of rules to apply to inbound request.<br/>See "Redirect rules" section|
+| Name <br>`json name`  | Type <br>`constraint`  | Mandatory  | Description  |
+|:----------------------|:-----------------------|:----------:|:-------------|
+| Cache configuration<br>`cache`| object|  | Cache configuration for regular expressions compiled from inbound request paths.<br/>See "Cache configuration" section.|
+| Redirect rules<br>`rules`| array| ✅| Ordered list of rules to apply to inbound request.<br/>See "Redirect rules" section.|
 
 
 #### Cache configuration (Object)
-| Name <br>`json name`  | Type <br>(constraint)  | Mandatory  | Default  | Supports <br>EL  | Supports <br>Secrets | Description  |
-|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
-| Maximum items<br>`maxItems`| integer<br>[0, +Inf]|  | `0`|  |  | Maximum number of regular expression patterns stored in the cache. 0 means no maximum.|
-| Time to live<br>`timeToLive`| integer<br>[0, +Inf]|  | `0`|  |  | The duration in milliseconds before a regular expression pattern stored in the cache gets evicted. 0 means no eviction.|
+| Name <br>`json name`  | Type <br>`constraint`  | Mandatory  | Default  | Description  |
+|:----------------------|:-----------------------|:----------:|:---------|:-------------|
+| Maximum items<br>`maxItems`| integer<br>`[0, +Inf]`|  | `0`| Maximum number of regular expression patterns stored in the cache. 0 means no maximum.|
+| Time to live<br>`timeToLive`| integer<br>`[0, +Inf]`|  | `0`| The duration in milliseconds before a regular expression pattern stored in the cache gets evicted. 0 means no eviction.|
 
 
 #### Redirect rules (Array)
-| Name <br>`json name`  | Type <br>(constraint)  | Mandatory  | Default  | Supports <br>EL  | Supports <br>Secrets | Description  |
-|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
-| Redirect to<br>`location`| string| ✅| | ✅|  | The  value to set in the Location header of the response (Supports EL).|
-| Match expression<br>`path`| string| ✅| | ✅|  | Regular expression to match incoming path (Supports EL).|
-| Response status<br>`status`| enum (integer)| ✅| `301`|  |  | Status of the HTTP redirect response<br>Values:`300` `301` `302` `303` `304` `305` `306` `307` `308` |
+| Name <br>`json name`  | Type <br>`constraint`  | Mandatory  | Default  | Description  |
+|:----------------------|:-----------------------|:----------:|:---------|:-------------|
+| Redirect to<br>`location`| string| ✅| | The  value to set in the Location header of the response (Supports EL).|
+| Match expression<br>`path`| string| ✅| | Regular expression to match incoming path (Supports EL).|
+| Response status<br>`status`| enum (integer)| ✅| `301`| Status of the HTTP redirect response<br>Values: `300` `301` `302` `303` `304` `305` `306` `307` `308`|
 
 
 
 
 ## Examples
-*V4 Proxy API With Defaults*
+
+*API with HTTP Redirect*
 ```json
 {
   "api": {
     "definitionVersion": "V4",
     "type": "PROXY",
-    "name": "HTTP Redirect Example v4 API",
+    "name": "HTTP Redirect example API",
     "flows": [
       {
         "name": "Common Flow",
@@ -127,17 +127,27 @@ Strikethrough line are deprecated versions
             "policy": "http-redirect",
             "configuration":
               {
-                "cache": {
-                  "maxItems": 0,
-                  "timeToLive": 0
-                },
-                "rules": [
-                  {
-                    "location": "https://api.gravitee.io/{#group[0]}",
-                    "path": "/(.*)",
-                    "status": 301
+                  "rules": [
+                      {
+                          "path": "/headers",
+                          "location": "https://httpbin.org/headers",
+                          "status": 302
+                      },
+                      {
+                          "path": "/status/(?<code>.*)",
+                          "location": "https://httpbin.org/status/{#groupName['code']}",
+                          "status": 301
+                      },
+                      {
+                          "path": "/(.*)",
+                          "location": "https://httpbin.org/anything/{#group[0]}",
+                          "status": 301
+                      }
+                  ],
+                  "cache": {
+                      "maxItems": 0,
+                      "timeToLive": 0
                   }
-                ]
               }
           }
         ]
@@ -147,14 +157,14 @@ Strikethrough line are deprecated versions
 }
 
 ```
-*CRD for V4 Proxy API With Defaults*
+*CRD API with HTTP Redirect*
 ```yaml
 apiVersion: "gravitee.io/v1alpha1"
 kind: "ApiV4Definition"
 metadata:
-    name: "http-redirect-example-v4-gko-api"
+    name: "http-redirect-proxy-api-crd"
 spec:
-    name: "HTTP Redirect Example V4 GKO API"
+    name: "HTTP Redirect"
     type: "PROXY"
     flows:
       - name: "Common Flow"
@@ -169,134 +179,35 @@ spec:
             policy: "http-redirect"
             configuration:
               cache:
-                maxItems: 0
-                timeToLive: 0
+                  maxItems: 0
+                  timeToLive: 0
               rules:
-                - location: https://api.gravitee.io/{#group[0]}
-                  path: /(.*)
-                  status: 301
+                  - location: https://httpbin.org/headers
+                    path: /headers
+                    status: 302
+                  - location: https://httpbin.org/status/{#groupName['code']}
+                    path: /status/(?<code>.*)
+                    status: 301
+                  - location: https://httpbin.org/anything/{#group[0]}
+                    path: /(.*)
+                    status: 301
 
 ```
-
-*V4 API with HTTP Redirect*
-```json
-{
-  "api": {
-    "definitionVersion": "V4",
-    "type": "PROXY",
-    "name": "HTTP Redirect Example v4 API",
-    "flows": [
-      {
-        "name": "Common Flow",
-        "enabled": true,
-        "selectors": [
-          {
-            "type": "HTTP",
-            "path": "/",
-            "pathOperator": "STARTS_WITH"
-          }
-        ],
-        "request": [
-          {
-            "name": "HTTP Redirect",
-            "enabled": true,
-            "policy": "http-redirect",
-            "configuration":
-              {
-                  "rules": [
-                      {
-                          "path": "/headers",
-                          "location": "https://httpbin.org/headers",
-                          "status": 302
-                      },
-                      {
-                          "path": "/status/(?<code>.*)",
-                          "location": "https://httpbin.org/status/{#groupName['code']}",
-                          "status": 301
-                      },
-                      {
-                          "path": "/(.*)",
-                          "location": "https://httpbin.org/anything/{#group[0]}",
-                          "status": 301
-                      }
-                  ],
-                  "cache": {
-                      "maxItems": 0,
-                      "timeToLive": 0
-                  }
-              }
-          }
-        ]
-      }
-    ]
-  }
-}
-
-```
-*V2 API with HTTP Redirect*
-```json
-{
-  "gravitee" : "2.0.0",
-  "name": "HTTP Redirect Example v4 API",
-  "flows": [
-    {
-      "name": "Common Flow",
-      "enabled": true,
-      "path-operator" : {
-        "path" : "/",
-        "operator" : "STARTS_WITH"
-      },
-      "pre": [
-        {
-          "name": "HTTP Redirect",
-          "enabled": true,
-          "policy": "http-redirect",
-          "configuration":
-            {
-                  "rules": [
-                      {
-                          "path": "/headers",
-                          "location": "https://httpbin.org/headers",
-                          "status": 302
-                      },
-                      {
-                          "path": "/status/(?<code>.*)",
-                          "location": "https://httpbin.org/status/{#groupName['code']}",
-                          "status": 301
-                      },
-                      {
-                          "path": "/(.*)",
-                          "location": "https://httpbin.org/anything/{#group[0]}",
-                          "status": 301
-                      }
-                  ],
-                  "cache": {
-                      "maxItems": 0,
-                      "timeToLive": 0
-                  }
-              }
-        }
-      ]
-    }
-  ]
-}
-
-
-```
-
-
 
 
 ## Changelog
 
+#### [1.0.1](https://github.com/gravitee-io/gravitee-policy-http-redirect/compare/1.0.0...1.0.1) (2025-05-21)
+
+
+##### Bug Fixes
+
+* normalize redirect location URI ([365cae8](https://github.com/gravitee-io/gravitee-policy-http-redirect/commit/365cae8ab0531d0a2f208480cb537f7a68f5da99))
+
 ### 1.0.0 (2025-04-18)
- 1.0.0 (2025-04-18)
 
 
 ##### Features
- Features
 
 * implement HTTP Redirect as a policy ([0ba2bb5](https://github.com/gravitee-io/gravitee-policy-http-redirect/commit/0ba2bb59f24ed54807771955f45248de42685396))
-
-
 

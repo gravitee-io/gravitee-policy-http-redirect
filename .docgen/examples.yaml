@@ -1,0 +1,14 @@
+genExamples: []
+rawExamples:
+    - title: API with HTTP Redirect
+      templateRef: v4-api-proxy
+      language: json
+      properties:
+          phase: request
+      file: .docgen/examples/http-redirect.json
+    - title: CRD API with HTTP Redirect
+      templateRef: v4-api-crd-proxy
+      language: json
+      properties:
+          phase: request
+      file: .docgen/examples/http-redirect.json

@@ -6,7 +6,6 @@ The URI for redirection is sent back to the HTTP client using a `Location` heade
 
 
 
-
 ## Usage
 
 You can configure multiple rules and their respective redirections relative to the
