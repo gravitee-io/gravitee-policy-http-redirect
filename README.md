@@ -5,7 +5,7 @@
 [![Gravitee.io](https://img.shields.io/static/v1?label=Available%20at&message=Gravitee.io&color=1EC9D2)](https://download.gravitee.io/#graviteeio-apim/plugins/policies/gravitee-policy-http-redirect/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gravitee-io/gravitee-policy-http-redirect/blob/master/LICENSE.txt)
 [![Releases](https://img.shields.io/badge/semantic--release-conventional%20commits-e10079?logo=semantic-release)](https://github.com/gravitee-io/gravitee-policy-http-redirect/releases)
-[![CircleCI](https://circleci.com/gh/gravitee-io/gravitee-policy-http-redirect.svg?style=svg)](https://circleci.com/gh/gravitee-io/gravitee-policy-http-redirect)
+[![CircleCI](https://circleci.com/gh/gravitee-io/gravitee-http-redirect.svg?style=svg)](https://circleci.com/gh/gravitee-io/gravitee-http-redirect)
 
 ## Overview
 The `http-redirect` policy is used to send redirect responses to an HTTP client as described in
@@ -69,9 +69,9 @@ The phases checked below are supported by the `http-redirect` policy:
 ## Compatibility matrix
 Strikethrough line are deprecated versions
 
-| Plugin version| APIM| AM| Cockpit| Java version| Comment |
-| --- | --- | --- | --- | --- | ---  |
-|1.0.0 and after|4.7.x and after|-|-|21|- |
+| Plugin version| APIM| Java version |
+| --- | --- | ---  |
+|1.0.0 and after|4.7.x and after|21 |
 
 
 ## Configuration Options
@@ -96,65 +96,21 @@ Strikethrough line are deprecated versions
 |:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
 | Redirect to<br>`location`| string| ✅| | ✅|  | The  value to set in the Location header of the response (Supports EL).|
 | Match expression<br>`path`| string| ✅| | ✅|  | Regular expression to match incoming path (Supports EL).|
-| Response status<br>`status`| enum (integer)| ✅| `301`|  |  | Status of the HTTP redirect response<br>Values:`300` `301` `302` `303` `304` `305` `306` `307` `308` |
+| Response status<br>`status`| enum (integer)| ✅| `301`|  |  | Status of the HTTP redirect response<br>Values: `300` `301` `302` `303` `304` `305` `306` `307` `308`|
 
 
 
 
 ## Examples
-*V4 Proxy API With Defaults*
-```json
-{
-  "api": {
-    "definitionVersion": "V4",
-    "type": "PROXY",
-    "name": "HTTP Redirect Example v4 API",
-    "flows": [
-      {
-        "name": "Common Flow",
-        "enabled": true,
-        "selectors": [
-          {
-            "type": "HTTP",
-            "path": "/",
-            "pathOperator": "STARTS_WITH"
-          }
-        ],
-        "request": [
-          {
-            "name": "HTTP Redirect",
-            "enabled": true,
-            "policy": "http-redirect",
-            "configuration":
-              {
-                "cache": {
-                  "maxItems": 0,
-                  "timeToLive": 0
-                },
-                "rules": [
-                  {
-                    "location": "https://api.gravitee.io/{#group[0]}",
-                    "path": "/(.*)",
-                    "status": 301
-                  }
-                ]
-              }
-          }
-        ]
-      }
-    ]
-  }
-}
 
-```
-*CRD for V4 Proxy API With Defaults*
+*V4 CRD API with HTTP Redirect*
 ```yaml
 apiVersion: "gravitee.io/v1alpha1"
 kind: "ApiV4Definition"
 metadata:
-    name: "http-redirect-example-v4-gko-api"
+    name: "http-redirect-example-v4-api-crd"
 spec:
-    name: "HTTP Redirect Example V4 GKO API"
+    name: "HTTP Redirect example with V4 API CRD"
     type: "PROXY"
     flows:
       - name: "Common Flow"
@@ -169,15 +125,20 @@ spec:
             policy: "http-redirect"
             configuration:
               cache:
-                maxItems: 0
-                timeToLive: 0
+                  maxItems: 0
+                  timeToLive: 0
               rules:
-                - location: https://api.gravitee.io/{#group[0]}
-                  path: /(.*)
-                  status: 301
+                  - location: https://httpbin.org/headers
+                    path: /headers
+                    status: 302
+                  - location: https://httpbin.org/status/{#groupName['code']}
+                    path: /status/(?<code>.*)
+                    status: 301
+                  - location: https://httpbin.org/anything/{#group[0]}
+                    path: /(.*)
+                    status: 301
 
 ```
-
 *V4 API with HTTP Redirect*
 ```json
 {
@@ -285,18 +246,19 @@ spec:
 ```
 
 
-
-
 ## Changelog
 
-### 1.0.0 (2025-04-18)
- 1.0.0 (2025-04-18)
+### [1.0.1](https://github.com/gravitee-io/gravitee-policy-http-redirect/compare/1.0.0...1.0.1) (2025-05-21)
 
 
-##### Features
- Features
+#### Bug Fixes
+
+* normalize redirect location URI ([365cae8](https://github.com/gravitee-io/gravitee-policy-http-redirect/commit/365cae8ab0531d0a2f208480cb537f7a68f5da99))
+
+## 1.0.0 (2025-04-18)
+
+
+#### Features
 
 * implement HTTP Redirect as a policy ([0ba2bb5](https://github.com/gravitee-io/gravitee-policy-http-redirect/commit/0ba2bb59f24ed54807771955f45248de42685396))
-
-
 
