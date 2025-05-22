@@ -78,25 +78,25 @@ Strikethrough line are deprecated versions
 
 
 #### 
-| Name <br>`json name`  | Type <br>(constraint)  | Mandatory  | Default  | Supports <br>EL  | Supports <br>Secrets | Description  |
-|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
-| Cache configuration<br>`cache`| object|  | |  |  | Cache configuration for regular expressions compiled from inbound request paths.<br/>See "Cache configuration" section|
-| Redirect rules<br>`rules`| array| ✅| |  |  | Ordered list of rules to apply to inbound request.<br/>See "Redirect rules" section|
+| Name <br>`json name`  | Type <br>`constraint`  | Mandatory  | Description  |
+|:----------------------|:-----------------------|:----------:|:-------------|
+| Cache configuration<br>`cache`| object|  | Cache configuration for regular expressions compiled from inbound request paths.<br/>See "Cache configuration" section|
+| Redirect rules<br>`rules`| array| ✅| Ordered list of rules to apply to inbound request.<br/>See "Redirect rules" section|
 
 
 #### Cache configuration (Object)
-| Name <br>`json name`  | Type <br>(constraint)  | Mandatory  | Default  | Supports <br>EL  | Supports <br>Secrets | Description  |
-|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
-| Maximum items<br>`maxItems`| integer<br>[0, +Inf]|  | `0`|  |  | Maximum number of regular expression patterns stored in the cache. 0 means no maximum.|
-| Time to live<br>`timeToLive`| integer<br>[0, +Inf]|  | `0`|  |  | The duration in milliseconds before a regular expression pattern stored in the cache gets evicted. 0 means no eviction.|
+| Name <br>`json name`  | Type <br>`constraint`  | Mandatory  | Default  | Description  |
+|:----------------------|:-----------------------|:----------:|:---------|:-------------|
+| Maximum items<br>`maxItems`| integer<br>`[0, +Inf]`|  | `0`| Maximum number of regular expression patterns stored in the cache. 0 means no maximum.|
+| Time to live<br>`timeToLive`| integer<br>`[0, +Inf]`|  | `0`| The duration in milliseconds before a regular expression pattern stored in the cache gets evicted. 0 means no eviction.|
 
 
 #### Redirect rules (Array)
-| Name <br>`json name`  | Type <br>(constraint)  | Mandatory  | Default  | Supports <br>EL  | Supports <br>Secrets | Description  |
-|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:--------------------:|:-------------|
-| Redirect to<br>`location`| string| ✅| | ✅|  | The  value to set in the Location header of the response (Supports EL).|
-| Match expression<br>`path`| string| ✅| | ✅|  | Regular expression to match incoming path (Supports EL).|
-| Response status<br>`status`| enum (integer)| ✅| `301`|  |  | Status of the HTTP redirect response<br>Values: `300` `301` `302` `303` `304` `305` `306` `307` `308`|
+| Name <br>`json name`  | Type <br>`constraint`  | Mandatory  | Default  | Supports <br>EL  | Description  |
+|:----------------------|:-----------------------|:----------:|:---------|:----------------:|:-------------|
+| Redirect to<br>`location`| string| ✅| | ✅| The  value to set in the Location header of the response (Supports EL).|
+| Match expression<br>`path`| string| ✅| | ✅| Regular expression to match incoming path (Supports EL).|
+| Response status<br>`status`| enum (integer)| ✅| `301`|  | Status of the HTTP redirect response<br>Values: `300` `301` `302` `303` `304` `305` `306` `307` `308`|
 
 
 
@@ -108,7 +108,7 @@ Strikethrough line are deprecated versions
 apiVersion: "gravitee.io/v1alpha1"
 kind: "ApiV4Definition"
 metadata:
-    name: "http-redirect-example-v4-api-crd"
+    name: "http-redirect-proxy-v4-api-crd"
 spec:
     name: "HTTP Redirect example with V4 API CRD"
     type: "PROXY"
