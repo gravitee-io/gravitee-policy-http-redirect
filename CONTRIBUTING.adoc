@@ -72,4 +72,6 @@ Please sign our https://download.gravitee.io/cla.pdf[Contributor License Agreeme
 
 == Further Information
 
-You can find more detailed information about contributing in the https://guides.github.com/activities/contributing-to-open-source/[Github guides].
+You can find more detailed information about contributing in the https://guides.github.com/activities/contributing-to-open-source/[Github guides]
+
+.
