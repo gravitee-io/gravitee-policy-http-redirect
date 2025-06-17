@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/gravitee-io/gravitee-policy-http-redirect/compare/1.0.1...1.0.2) (2025-06-17)
+
+
+### Bug Fixes
+
+* regenerate docs using docgen ([1e11d3b](https://github.com/gravitee-io/gravitee-policy-http-redirect/commit/1e11d3b85a47f3384f1b46e0a0270699f149a53f))
+
 ## [1.0.1](https://github.com/gravitee-io/gravitee-policy-http-redirect/compare/1.0.0...1.0.1) (2025-05-21)
 
 
