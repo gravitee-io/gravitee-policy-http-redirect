@@ -75,8 +75,7 @@ public class HTTPRedirectPolicy implements HttpPolicy {
     }
 
     private Maybe<RuleMatch> rxFindMatchingRule(String path, TemplateEngine templateEngine) {
-        return Flowable
-            .fromIterable(configuration.rules())
+        return Flowable.fromIterable(configuration.rules())
             .flatMapMaybe(rule ->
                 templateEngine
                     .eval(rule.path(), String.class)
